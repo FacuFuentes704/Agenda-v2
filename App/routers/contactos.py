@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from App.database import SessionLocal
 from App.models import Contacto
 from App.schemas import ContactoCreate, ContactoResponse
+from sqlalchemy import func
 
 router = APIRouter(
     prefix="/contactos",
@@ -28,3 +29,12 @@ def crear_contacto(contacto: ContactoCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(nuevo_contacto)
     return nuevo_contacto
+
+@router.get("/buscar", response_model=list[ContactoResponse])
+def buscar_nombre(nombre: str, db: Session = Depends(get_db)):
+    respuesta = db.query(Contacto).filter(func.lower(Contacto.nombre) == func.lower(nombre)).all()
+    if not respuesta:
+        raise HTTPException(status_code=404, detail="Contacto no encontrado")
+    else:
+        return respuesta
+        
