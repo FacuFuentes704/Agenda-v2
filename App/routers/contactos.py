@@ -38,3 +38,12 @@ def buscar_nombre(nombre: str, db: Session = Depends(get_db)):
     else:
         return respuesta
         
+@router.delete("/{id}", status_code=204)
+def eliminar_contacto(id: int, db: Session = Depends(get_db)):
+    resultado = db.query(Contacto).filter(Contacto.id == id).first()
+    if not resultado:
+        raise HTTPException(status_code=404, detail="Contacto no encontrado")
+    else:
+        db.delete(resultado)
+        db.commit()
+ 
