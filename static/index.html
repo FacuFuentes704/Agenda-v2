@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang = "es">
+<head>
+    <meta charset="UTF-8">
+    <title>Agenda</title>
+</head>
+<body>
+    <h1>Agenda de contactos</h1>
+    <button id="btn_listar">Listar contactos</button>
+    <div id="lista"></div>
+    <h2>Agregar contacto</h2>
+    <input type="text" id="nombre" placeholder="nombre">
+    <input type="text" id="telefono" placeholder="telefono">
+    <input type="email" id="email" placeholder="email">
+    <input type="text" id="direccion" placeholder="direccion">
+    <button id="btn_enviar">Agregar contacto</button>
+    <script>
+        document.getElementById("btn_listar").addEventListener("click", function(){
+            fetch("http://127.0.0.1:8000/contactos/")
+            .then(function(response){
+                return response.json()
+            })
+            .then(function(datos){
+                document.getElementById("lista").innerHTML = ""
+                datos.forEach(function(contacto){
+                    document.getElementById("lista").innerHTML += "<p>" + "Nombre: " + contacto.nombre + "</p>"
+                    document.getElementById("lista").innerHTML += "<p>" + "Telefono: " + contacto.telefono + "</p>"
+                    document.getElementById("lista").innerHTML += "<p>" + "Email: " + contacto.email + "</p>"
+                    document.getElementById("lista").innerHTML += "<p>" + "Direccion: " + contacto.direccion + "</p>"
+                })
+            })
+        })
+        document.getElementById("btn_enviar").addEventListener("click", function(){
+            let nombre = document.getElementById("nombre").value
+            let telefono = document.getElementById("telefono").value
+            let email = document.getElementById("email").value
+            let direccion = document.getElementById("direccion").value
+            fetch("http://127.0.0.1:8000/contactos/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    nombre: nombre,
+                    telefono: telefono,
+                    email: email,
+                    direccion: direccion
+                }) 
+            })
+        })
+    </script>
+</body>
+</html>

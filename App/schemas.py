@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field
+from typing import Optional
 
 class ContactoCreate(BaseModel):
     nombre: str = Field(min_length=1)
@@ -12,6 +13,12 @@ class ContactoResponse(BaseModel):
     telefono: str
     email: str
     direccion: str
+
+class ContactoUpdate(BaseModel):
+    nombre: Optional[str] = None
+    telefono: Optional[str] = None
+    email: Optional[EmailStr] = None
+    direccion: Optional[str] = None
 
     class Config:
         from_attributes = True

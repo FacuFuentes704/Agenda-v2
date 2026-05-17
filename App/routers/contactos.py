@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from App.database import SessionLocal
 from App.models import Contacto
-from App.schemas import ContactoCreate, ContactoResponse
+from App.schemas import ContactoCreate, ContactoResponse, ContactoUpdate
 from sqlalchemy import func
 
 router = APIRouter(
@@ -46,4 +46,15 @@ def eliminar_contacto(id: int, db: Session = Depends(get_db)):
     else:
         db.delete(resultado)
         db.commit()
- 
+@router.patch("/{id}", response_model=ContactoResponse)
+def modificar_contacto(id: int, contacto: ContactoUpdate, db: Session = Depends(get_db)):
+    resultado = db.query(Contacto).filter(Contacto.id == id).first()
+    if not resultado:
+        raise HTTPException(status_code=404, detail="Contacto no encontrado")
+    else:
+        datos = contacto.model_dump(exclude_unset=True)
+        for campo, valor in datos.items():
+            setattr(resultado, campo, valor)
+        db.commit()
+        db.refresh(resultado)
+        return resultado
